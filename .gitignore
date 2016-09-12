@@ -7,3 +7,8 @@
 /pkg/
 /spec/reports/
 /tmp/
+.idea/.name
+.idea/.rakeTasks
+.idea/facebook-messenger.iml
+.idea/vcs.xml
+.idea/workspace.xml

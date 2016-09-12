@@ -45,7 +45,8 @@ module Facebook
       def receive
         body = @request.body.read
 
-        check_integrity(body) if app_secret
+        body_json = JSON.parse(body)
+        check_integrity(body) if app_secret(body_json['entry'][0]['messaging'][0]['recipient']['id'])
 
         events = parse_events(body)
 
@@ -73,19 +74,26 @@ module Facebook
       end
 
       def secure_compare(x, y)
+        puts "comparing x: #{x}, to y: #{y}"
         Rack::Utils.secure_compare(x, y)
       end
 
       def signature(body)
-        format('sha1=%s'.freeze, generate_hmac(body))
+        sig = format('sha1=%s'.freeze, generate_hmac(body))
       end
 
       def generate_hmac(content)
-        OpenSSL::HMAC.hexdigest('sha1'.freeze, app_secret, content)
+        content_json = JSON.parse(content)
+        OpenSSL::HMAC.hexdigest('sha1'.freeze, app_secret(content_json['entry'][0]['messaging'][0]['recipient']['id']), content)
       end
 
-      def app_secret
-        Facebook::Messenger.config.app_secret
+      def app_secret(recipient)
+        puts "@@@@@@@@@@ recipient: #{recipient}"
+        if recipient == '967988133312094'
+          Facebook::Messenger.config.app_secrets[1]
+        elsif recipient == '291260151240026'
+          Facebook::Messenger.config.app_secrets[0]
+        end
       end
 
       def parse_events(body)

@@ -18,8 +18,8 @@ module Facebook
         #
         # Returns a String describing the message ID if the message was sent,
         # or raises an exception if it was not.
-        def deliver(message)
-          response = post '/messages', body: JSON.dump(message), format: :json
+        def deliver(message, access_token)
+          response = post '/messages', body: JSON.dump(message), format: :json, query: {access_token: access_token}
 
           raise_errors_from(response)
 
@@ -71,8 +71,8 @@ module Facebook
           error = response['error']
 
           raise(
-            error_class_from_error_code(error['code']),
-            (error['error_data'] || error['message'])
+              error_class_from_error_code(error['code']),
+              (error['error_data'] || error['message'])
           )
         end
 
@@ -83,9 +83,9 @@ module Facebook
         # Returns an error class, or raises KeyError if none was found.
         def error_class_from_error_code(error_code)
           {
-            100 => RecipientNotFound,
-            10 => PermissionDenied,
-            2 => InternalError
+              100 => RecipientNotFound,
+              10 => PermissionDenied,
+              2 => InternalError
           }[error_code] || Facebook::Messenger::Error
         end
 
@@ -101,20 +101,25 @@ module Facebook
 
         # Default HTTParty options.
         def default_options
-          super.merge(
-            query: {
-              access_token: Facebook::Messenger.config.access_token
-            },
-            headers: {
-              'Content-Type' => 'application/json'
-            }
+          params = super.merge(
+              # query: {access_token: Facebook::Messenger.config.access_tokens[0]},
+              headers: {
+                  'Content-Type' => 'application/json'
+              }
           )
+          puts
+          puts "*******************: params: #{params}"
+          puts
+          params
         end
       end
 
-      class RecipientNotFound < Facebook::Messenger::Error; end
-      class PermissionDenied < Facebook::Messenger::Error; end
-      class InternalError < Facebook::Messenger::Error; end
+      class RecipientNotFound < Facebook::Messenger::Error;
+      end
+      class PermissionDenied < Facebook::Messenger::Error;
+      end
+      class InternalError < Facebook::Messenger::Error;
+      end
     end
   end
 end
