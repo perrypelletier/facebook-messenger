@@ -101,16 +101,11 @@ module Facebook
 
         # Default HTTParty options.
         def default_options
-          params = super.merge(
-              # query: {access_token: Facebook::Messenger.config.access_tokens[0]},
+          super.merge(
               headers: {
                   'Content-Type' => 'application/json'
               }
           )
-          puts
-          puts "*******************: params: #{params}"
-          puts
-          params
         end
       end
 

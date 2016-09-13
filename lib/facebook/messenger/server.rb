@@ -74,7 +74,6 @@ module Facebook
       end
 
       def secure_compare(x, y)
-        puts "comparing x: #{x}, to y: #{y}"
         Rack::Utils.secure_compare(x, y)
       end
 
@@ -88,11 +87,11 @@ module Facebook
       end
 
       def app_secret(recipient)
-        puts "@@@@@@@@@@ recipient: #{recipient}"
-
         if Facebook::Messenger.config.config_provider_class.present?
           config_provider = Facebook::Messenger.config.config_provider_class.new
           config_provider.app_secret_for(recipient)
+        else
+          raise 'need to provide the default behavior here'
         end
       end
 
