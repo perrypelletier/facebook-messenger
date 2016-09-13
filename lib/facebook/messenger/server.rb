@@ -89,10 +89,10 @@ module Facebook
 
       def app_secret(recipient)
         puts "@@@@@@@@@@ recipient: #{recipient}"
-        if recipient == '967988133312094'
-          Facebook::Messenger.config.app_secrets[1]
-        elsif recipient == '291260151240026'
-          Facebook::Messenger.config.app_secrets[0]
+
+        if Facebook::Messenger.config.config_provider_class.present?
+          config_provider = Facebook::Messenger.config.config_provider_class.new
+          config_provider.app_secret_for(recipient)
         end
       end
 
