@@ -91,7 +91,7 @@ module Facebook
           config_provider = Facebook::Messenger.config.config_provider_class.new
           config_provider.app_secret_for(recipient)
         else
-          raise 'need to provide the default behavior here'
+          Facebook::Messenger.configure.app_secret
         end
       end
 
